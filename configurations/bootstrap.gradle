@@ -1,0 +1,57 @@
+//required:
+//  bootstrapEntry
+//  libsDir
+
+apply plugin: "application"
+
+mainClassName = "muscaa.chess.bootstrap.main.Main"
+application.setMainClass(mainClassName)
+
+dependencies {
+	bootstrap "com.github.muscaa.chess:bootstrap:$chessVersion"
+}
+
+tasks.register("copyLibs") {
+	def libs = file("run/${libsDir}")
+	
+    inputs.files(configurations.shade, configurations.embedded, configurations.export, configurations.internal)
+    outputs.dir(libs)
+	
+    doLast {
+        copy {
+        	from(configurations.shade)
+        	from(configurations.embedded)
+        	from(configurations.export)
+        	from(configurations.internal)
+        	into(libs)
+        }
+    }
+}
+
+run {
+	dependsOn "classes"
+    dependsOn "copyLibs"
+    
+    standardInput = System.in
+    
+    classpath = files(configurations.bootstrap)
+    
+    workingDir = file("run")
+    workingDir.mkdirs()
+    
+    def libs = tasks.named("copyLibs").get().outputs.files.singleFile
+    
+    def libJars = [libs]
+    def libClasses = []
+    def modJars = []
+    def modClasses = []
+    modClasses.addAll(files(sourceSets.main.output).files.collect { it.absolutePath })
+    
+    jvmArgs = [
+    	"-Dbootstrap.entry=${bootstrapEntry}",
+    	"-Dlib.jars=${libJars.join(';')}",
+    	"-Dlib.classes=${libClasses.join(';')}",
+    	"-Dmod.jars=${modJars.join(';')}",
+    	"-Dmod.classes=${modClasses.join(';')}",
+    ]
+}

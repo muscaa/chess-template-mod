@@ -1,0 +1,14 @@
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    maven { url "https://libraries.minecraft.net" }
+}
+
+dependencies {
+	internal "com.github.muscaa.chess:server:$chessVersion"
+}
+
+ext.bootstrapEntry = "muscaa.chess.server.main.Main"
+ext.libsDir = "libs"
+
+apply from: "configurations/bootstrap.gradle"

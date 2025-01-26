@@ -1,0 +1,12 @@
+apply from: "configurations/init.gradle"
+apply from: "configurations/client.gradle"
+//apply from: "configurations/server.gradle"
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+	
+}

@@ -1,0 +1,83 @@
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "java-library"
+
+idea {
+	module {
+		outputDir file("build/classes/java/main")
+		testOutputDir file("build/classes/java/test")
+	}
+}
+
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
+configurations {
+	// required at compile & runtime, not included, not published
+	provided {
+		canBeResolved = true
+	    canBeConsumed = true
+	}
+	
+	// not required at compile & runtime, included, not published
+	embedded {
+		canBeResolved = true
+	    canBeConsumed = true
+	}
+	
+	// required at compile & runtime, included, published
+    export {
+	    canBeResolved = true
+	    canBeConsumed = true
+    }
+    
+    // required at compile & runtime, included, not published
+    internal {
+	    canBeResolved = true
+	    canBeConsumed = true
+    }
+	
+	// bootstrap dependencies
+	bootstrap {
+		canBeResolved = true
+	    canBeConsumed = true
+	}
+    
+    // shaded dependencies
+    shade {
+		canBeResolved = true
+	    canBeConsumed = true
+	}
+    
+    compileClasspath.extendsFrom(provided)
+    runtimeClasspath.extendsFrom(provided)
+    testCompileClasspath.extendsFrom(provided)
+    testRuntimeClasspath.extendsFrom(provided)
+    
+    api.extendsFrom(export)
+    provided.extendsFrom(internal)
+    provided.extendsFrom(bootstrap)
+    provided.extendsFrom(shade)
+}
+
+jar {
+	into("META-INF") {
+        from("${rootProject.projectDir}/LICENSE")
+        from("${rootProject.projectDir}/NOTICE")
+    }
+    
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+	dependsOn configurations.shade
+	from {
+		configurations.shade.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+}
+
+java {
+	withSourcesJar()
+	withJavadocJar()
+}

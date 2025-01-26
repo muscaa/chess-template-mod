@@ -1,0 +1,8 @@
+{
+	"id": "example_mod_id",
+	"name": "Example Mod Name",
+	"version": "1.0.0",
+	"description": "This is an example mod description.",
+	"clientMain": "com.example.mod.ClientExampleMod",
+	"serverMain": "com.example.mod.ServerExampleMod"
+}
