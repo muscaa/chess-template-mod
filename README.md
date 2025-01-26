@@ -2,6 +2,9 @@
 
 A template for creating [Chess](https://github.com/muscaa/chess) mods.
 
+## Requirements
+- JDK 17+
+
 ## Gradle
 
 ### Run
